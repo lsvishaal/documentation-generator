@@ -197,7 +197,7 @@ sudo make install   # To install the kernel
 
 ## Contributing
 
-Contributions are welcome! Please read the contributing guidelines and follow best practices for submitting patches.
+Contributions are welcome! Please read the contributing guidelines and follow best practices for submitting patches. 
 \`\`\`
 
 ### Key Features of Generated READMEs
