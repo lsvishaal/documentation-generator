@@ -40,9 +40,9 @@ jobs:
           file: ./Dockerfile.agent
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: lsvishaal/documentation-generator:latest
-          cache-from: type=registry,ref=lsvishaal/documentation-generator:buildcache
-          cache-to: type=registry,ref=lsvishaal/documentation-generator:buildcache,mode=max
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:buildcache,mode=max
 
       - name: Read agent config
         id: agent_config
@@ -87,7 +87,7 @@ jobs:
               "deployment": {
                 "url": "${{ fromJson(steps.agent_config.outputs.config).deployment.url }}",
                 "protocol_version": "${{ fromJson(steps.agent_config.outputs.config).deployment.protocol_version }}",
-                "docker_image": "lsvishaal/documentation-generator:latest",
+                "docker_image": "${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:latest",
                 "docker_digest": "${{ steps.docker_build.outputs.digest }}",
                 "platforms": ["linux/amd64", "linux/arm64"]
               },
