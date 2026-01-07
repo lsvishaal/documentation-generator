@@ -32,7 +32,7 @@
 
 ---
 
-> **🌐 Join the Internet of Agents**  
+> **🌐 Join the Internet of Agents**
 > Register your agent at [bindus.directory](https://bindus.directory) to make it discoverable worldwide and enable agent-to-agent collaboration. **It takes 2 minutes and unlocks the full potential of your agent.**
 
 ---
@@ -197,16 +197,16 @@ sudo make install   # To install the kernel
 
 ## Contributing
 
-Contributions are welcome! Please read the contributing guidelines and follow best practices for submitting patches. 
+Contributions are welcome! Please read the contributing guidelines and follow best practices for submitting patches.
 \`\`\`
 
 ### Key Features of Generated READMEs
 
-✅ Automated badge generation (stars, forks, issues, license)  
-✅ Clone and installation instructions  
-✅ Usage examples  
-✅ Development contribution guidelines  
-✅ Resource links and documentation references  
+✅ Automated badge generation (stars, forks, issues, license)
+✅ Clone and installation instructions
+✅ Usage examples
+✅ Development contribution guidelines
+✅ Resource links and documentation references
 ✅ Professional, maintainer-friendly structure
 
 ---
@@ -246,7 +246,7 @@ To deploy your agent to the Bindu directory (bindus.directory), you need **two t
 
 #### 1. **BINDU_API_TOKEN** (Bindu Directory Authentication)
 
-**What it is**: Authentication token from the Bindu directory for agent registration and discovery  
+**What it is**: Authentication token from the Bindu directory for agent registration and discovery
 **Where to get it**:
 1. Visit https://bindus.directory
 2. Sign in (create free account if needed)
@@ -257,7 +257,7 @@ To deploy your agent to the Bindu directory (bindus.directory), you need **two t
 
 #### 2. **DOCKERHUB_TOKEN** (Docker Registry Authentication)
 
-**What it is**: Personal access token for pushing Docker images to Docker Hub  
+**What it is**: Personal access token for pushing Docker images to Docker Hub
 **Where to get it**:
 1. Visit https://hub.docker.com/settings/security
 2. Click "New Access Token"
@@ -285,7 +285,7 @@ docker-compose -f docker-compose.prod.yml up
 # Add Bindu directory token
 gh secret set BINDU_API_TOKEN --body "<your-bindu-token-here>"
 
-# Add Docker Hub token  
+# Add Docker Hub token
 gh secret set DOCKERHUB_TOKEN --body "<your-docker-token-here>"
 
 # Add Docker Hub username
@@ -302,7 +302,7 @@ git push origin main
 
 GitHub Actions will automatically:
 1. ✅ Build your agent Docker image
-2. ✅ Push it to Docker Hub  
+2. ✅ Push it to Docker Hub
 3. ✅ Register your agent in bindus.directory
 4. ✅ Make it discoverable to other agents worldwide
 

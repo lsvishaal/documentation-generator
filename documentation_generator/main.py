@@ -102,10 +102,9 @@ async def run_agent(messages: list[dict[str, str]]) -> Any:
     """
     global agent
     if agent is None:
-        raise RuntimeError("Agent is not initialized")
+        msg = "Agent is not initialized"
+        raise RuntimeError(msg)
     return await agent.arun(messages)
-
-
 
 
 async def handler(messages: list[dict[str, str]]) -> Any:
@@ -118,7 +117,6 @@ async def handler(messages: list[dict[str, str]]) -> Any:
     Returns:
         Agent response (ManifestWorker will handle extraction)
     """
-
     global _initialized
 
     # Lazy initialization on first call (in bindufy's event loop)
@@ -132,14 +130,13 @@ async def handler(messages: list[dict[str, str]]) -> Any:
     return await run_agent(messages)
 
 
-
 async def initialize_all() -> None:
     """Initialize the agent."""
     await initialize_agent()
 
 
 def main():
-    """Main entry point for the Readme Generator Agent."""
+    """Start the Readme Generator Agent."""
     global model_name, openai_api_key, openrouter_api_key, github_token, output_dir
 
     # Parse command-line arguments

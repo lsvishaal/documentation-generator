@@ -7,8 +7,7 @@
 #
 #  Thank you users! We ❤️ you! - 🌻
 
-"""documentation-generator - An Bindu Agent.
-"""
+"""documentation-generator - An Bindu Agent."""
 
 from documentation_generator.__version__ import __version__
 from documentation_generator.main import (
