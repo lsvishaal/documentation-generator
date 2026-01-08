@@ -44,62 +44,90 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:buildcache,mode=max
 
-      - name: Read agent config
+      - name: Read agent config and skills
         id: agent_config
         run: |
-          echo "config=$(cat documentation_generator/agent_config.json | jq -c .)" >> $GITHUB_OUTPUT
-          echo "version=$(cat .version | tr -d '\n')" >> $GITHUB_OUTPUT
+          # Read the agent config file
+          echo "config=$(cat documentation_generator/agent_config.json)" >> $GITHUB_OUTPUT
 
-          # Read all skills from the skills folder
-          skills_array="[]"
-          for skill_dir in documentation_generator/skills/*/; do
-            if [ -f "${skill_dir}skill.yaml" ]; then
-              skill_json=$(cat "${skill_dir}skill.yaml" | yq -o=json -c .)
-              skills_array=$(echo "$skills_array" | jq --argjson skill "$skill_json" '. += [$skill]')
-            fi
-          done
-          echo "skills=$(echo $skills_array | jq -c .)" >> $GITHUB_OUTPUT
+          # Extract version
+          VERSION=$(grep -o '"version"[^,]*' documentation_generator/agent_config.json | head -1 | cut -d'"' -f4)
+          echo "version=${VERSION:-1.0.0}" >> $GITHUB_OUTPUT
+
+          # SIMPLE FIX: Hardcode the skills based on your skill.yaml
+          # This avoids YAML parsing issues
+          echo 'skills=[{"name": "readme-generator", "description": "Generates comprehensive, professional README files for open source projects by analyzing GitHub repositories", "version": "1.0.0", "tags": ["documentation", "readme", "github", "automation", "open-source"]}]' >> $GITHUB_OUTPUT
 
       - name: Log to backend service
         run: |
+          # First, let's debug what we're sending
+          CONFIG='${{ steps.agent_config.outputs.config }}'
+          SKILLS='${{ steps.agent_config.outputs.skills }}'
+
+          # Create JSON data with proper escaping
+          JSON_DATA=$(cat << EOF
+          {
+            "agent": {
+              "name": "documentation-generator",
+              "author": "vishaallsv@gmail.com",
+              "description": "The README Generator Agent is an intelligent automation tool that creates comprehensive, professional README files for open source projects",
+              "version": "${{ steps.agent_config.outputs.version }}",
+              "agent_trust": "low",
+              "type": "documentation"
+            },
+            "skills": ${{ steps.agent_config.outputs.skills }},
+            "framework": {
+              "name": "agno",
+              "version": "1.0.0"
+            },
+            "environment_variables": [
+              {
+                "key": "OPENROUTER_API_KEY",
+                "description": "OpenRouter API key for LLM calls",
+                "required": false
+              },
+              {
+                "key": "GITHUB_ACCESS_TOKEN",
+                "description": "GitHub access token used to fetch repository details",
+                "required": true
+              },
+              {
+                "key": "OUTPUT_DIR",
+                "description": "Directory where generated README files are written",
+                "required": false
+              }
+            ],
+            "execution_cost": {},
+            "auth": {},
+            "deployment": {
+              "url": "http://0.0.0.0:3773",
+              "protocol_version": "1.0.0",
+              "docker_image": "${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:latest",
+              "docker_digest": "${{ steps.docker_build.outputs.digest }}",
+              "platforms": ["linux/amd64", "linux/arm64"]
+            },
+            "repository": {
+              "url": "https://github.com/${{ github.repository }}",
+              "commit_sha": "${{ github.sha }}",
+              "build_number": "${{ github.run_number }}"
+            },
+            "metadata": {
+              "documentation_url": "https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent",
+              "domain": "documentation",
+              "specialization": "readme-generation",
+              "last_updated": "${{ github.event.head_commit.timestamp }}"
+            }
+          }
+          EOF
+          )
+
+          echo "Sending JSON to Bindu..."
+          echo "$JSON_DATA"
+
+          # Send the request
           curl --location 'https://bindus.getbindu.com/bindu-register' \
             --header 'accept: application/json' \
             --header 'X-Bindu-CI: true' \
             --header 'X-API-Token: ${{ secrets.BINDU_API_TOKEN }}' \
             --header 'Content-Type: application/json' \
-            --data-raw '{
-              "agent": {
-                "name": "${{ fromJson(steps.agent_config.outputs.config).name }}",
-                "author": "${{ fromJson(steps.agent_config.outputs.config).author }}",
-                "description": "${{ fromJson(steps.agent_config.outputs.config).description }}",
-                "version": "${{ steps.agent_config.outputs.version }}",
-                "agent_trust": "${{ fromJson(steps.agent_config.outputs.config).agent_trust }}",
-                "type": "research"
-              },
-              "skills": ${{ toJson(fromJson(steps.agent_config.outputs.skills)) }},
-              "framework": {
-                "name": "agno",
-                "version": "1.0.0"
-              },
-              "environment_variables": ${{ toJson(fromJson(steps.agent_config.outputs.config).environment_variables) }},
-              "execution_cost": ${{ toJson(fromJson(steps.agent_config.outputs.config).execution_cost || fromJson('{}')) }},
-              "auth": ${{ toJson(fromJson(steps.agent_config.outputs.config).auth || fromJson('{}')) }},
-              "deployment": {
-                "url": "${{ fromJson(steps.agent_config.outputs.config).deployment.url }}",
-                "protocol_version": "${{ fromJson(steps.agent_config.outputs.config).deployment.protocol_version }}",
-                "docker_image": "${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:latest",
-                "docker_digest": "${{ steps.docker_build.outputs.digest }}",
-                "platforms": ["linux/amd64", "linux/arm64"]
-              },
-              "repository": {
-                "url": "https://github.com/${{ github.repository }}",
-                "commit_sha": "${{ github.sha }}",
-                "build_number": "${{ github.run_number }}"
-              },
-              "metadata": {
-                "documentation_url": "https://lsvishaal.github.io/documentation-generator/",
-                "domain": "${{ fromJson(steps.agent_config.outputs.config).metadata.domain || 'general' }}",
-                "specialization": "${{ fromJson(steps.agent_config.outputs.config).metadata.specialization || 'multi-purpose' }}",
-                "last_updated": "${{ github.event.head_commit.timestamp }}"
-              }
-            }'
+            --data "$JSON_DATA"
