@@ -48,11 +48,11 @@ jobs:
         id: agent_config
         run: |
           # Read the agent config file
-          echo "config=$(cat documentation_generator/agent_config.json)" >> $GITHUB_OUTPUT
+          echo "config=$(cat documentation_generator/agent_config.json | jq -c .)" >> $GITHUB_OUTPUT
 
           # Extract version
-          VERSION=$(grep -o '"version"[^,]*' documentation_generator/agent_config.json | head -1 | cut -d'"' -f4)
-          echo "version=${VERSION:-1.0.0}" >> $GITHUB_OUTPUT
+          VERSION=$(cat documentation_generator/agent_config.json | jq -r '.version // "1.0.0"')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
           # SIMPLE FIX: Hardcode the skills based on your skill.yaml
           # This avoids YAML parsing issues
@@ -61,18 +61,18 @@ jobs:
       - name: Log to backend service
         run: |
           # First, let's debug what we're sending
-          CONFIG='${{ steps.agent_config.outputs.config }}'
-          SKILLS='${{ steps.agent_config.outputs.skills }}'
+          echo "Debug - Agent Name: ${{ fromJson(steps.agent_config.outputs.config).name }}"
+          echo "Debug - Skills: ${{ steps.agent_config.outputs.skills }}"
 
           # Create JSON data with proper escaping
           JSON_DATA=$(cat << EOF
           {
             "agent": {
-              "name": "documentation-generator",
-              "author": "vishaallsv@gmail.com",
-              "description": "The README Generator Agent is an intelligent automation tool that creates comprehensive, professional README files for open source projects",
+              "name": "${{ fromJson(steps.agent_config.outputs.config).name }}",
+              "author": "${{ fromJson(steps.agent_config.outputs.config).author }}",
+              "description": "${{ fromJson(steps.agent_config.outputs.config).description }}",
               "version": "${{ steps.agent_config.outputs.version }}",
-              "agent_trust": "low",
+              "agent_trust": "${{ fromJson(steps.agent_config.outputs.config).agent_trust }}",
               "type": "documentation"
             },
             "skills": ${{ steps.agent_config.outputs.skills }},
@@ -80,28 +80,12 @@ jobs:
               "name": "agno",
               "version": "1.0.0"
             },
-            "environment_variables": [
-              {
-                "key": "OPENROUTER_API_KEY",
-                "description": "OpenRouter API key for LLM calls",
-                "required": false
-              },
-              {
-                "key": "GITHUB_ACCESS_TOKEN",
-                "description": "GitHub access token used to fetch repository details",
-                "required": true
-              },
-              {
-                "key": "OUTPUT_DIR",
-                "description": "Directory where generated README files are written",
-                "required": false
-              }
-            ],
+            "environment_variables": ${{ toJson(fromJson(steps.agent_config.outputs.config).environment_variables) }},
             "execution_cost": {},
             "auth": {},
             "deployment": {
-              "url": "http://0.0.0.0:3773",
-              "protocol_version": "1.0.0",
+              "url": "${{ fromJson(steps.agent_config.outputs.config).deployment.url }}",
+              "protocol_version": "${{ fromJson(steps.agent_config.outputs.config).deployment.protocol_version }}",
               "docker_image": "${{ secrets.DOCKERHUB_USERNAME }}/documentation-generator:latest",
               "docker_digest": "${{ steps.docker_build.outputs.digest }}",
               "platforms": ["linux/amd64", "linux/arm64"]
@@ -122,7 +106,7 @@ jobs:
           )
 
           echo "Sending JSON to Bindu..."
-          echo "$JSON_DATA"
+          echo "$JSON_DATA" | jq .
 
           # Send the request
           curl --location 'https://bindus.getbindu.com/bindu-register' \
