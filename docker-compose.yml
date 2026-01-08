@@ -2,7 +2,7 @@ services:
   documentation_generator:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.agent
     container_name: documentation_generator
     ports:
       - "3773:3773"

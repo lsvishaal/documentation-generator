@@ -4,8 +4,17 @@
   "description": "The README Generator Agent is an intelligent automation tool that creates comprehensive, professional README files for open source projects. This agent leverages the power of AI to analyze GitHub repositories and generate well-structured documentation automatically.",
   "version": "1.0.0",
   "recreate_keys": false,
-  "skills": [],
-  "capabilities": {},
+  "skills": [
+    {
+      "name": "readme-generator",
+      "version": "1.0.0",
+      "description": "Generates comprehensive, professional README files for open source projects by analyzing GitHub repositories"
+    }
+  ],
+  "capabilities": {
+    "readme_generation": "Generate professional README files from GitHub repositories",
+    "repository_analysis": "Analyze GitHub repositories for documentation"
+  },
   "agent_trust": "low",
   "debug_mode": true,
   "debug_level": 2,

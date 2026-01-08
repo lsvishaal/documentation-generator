@@ -11,14 +11,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/lsvishaal/documentation-generator/actions/workflows/main.yml?query=branch%3Amain">
-    <img src="https://img.shields.io/github/actions/workflow/status/lsvishaal/documentation-generator/main.yml?branch=main" alt="Build status">
+  <a href="https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/Bindu-Agents-Vishaal/documentation-generator-agent/build-and-push.yml?branch=main" alt="Build status">
   </a>
-  <a href="https://codecov.io/gh/lsvishaal/documentation-generator">
-    <img src="https://codecov.io/gh/lsvishaal/documentation-generator/branch/main/graph/badge.svg" alt="codecov">
+  <a href="https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent">
+    <img src="https://img.shields.io/github/license/Bindu-Agents-Vishaal/documentation-generator-agent" alt="License">
   </a>
-  <a href="https://img.shields.io/github/license/lsvishaal/documentation-generator">
-    <img src="https://img.shields.io/github/license/lsvishaal/documentation-generator" alt="License">
+  <a href="https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent/stargazers">
+    <img src="https://img.shields.io/github/stars/Bindu-Agents-Vishaal/documentation-generator-agent" alt="Stars">
   </a>
 </p>
 
@@ -39,9 +39,9 @@
 
 ## 📚 Quick Links
 
-- 📖 **[Full Documentation](https://lsvishaal.github.io/documentation-generator/)**
-- 💻 **[GitHub Repository](https://github.com/lsvishaal/documentation-generator/)**
-- 🐛 **[Report Issues](https://github.com/lsvishaal/documentation-generator/issues)**
+- 📖 **[Full Documentation](https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent)**
+- 💻 **[GitHub Repository](https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent)**
+- 🐛 **[Report Issues](https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent/issues)**
 - 💬 **[Join Discord](https://discord.gg/3w5zuYUuwt)**
 - 🌐 **[Agent Directory](https://bindus.directory)**
 
@@ -79,7 +79,7 @@ Edit `.env` and add your keys:
 | Key | Get It From | Free Tier? |
 |-----|-------------|------------|
 | `OPENROUTER_API_KEY` | [OpenRouter](https://openrouter.ai/keys) | ✅ Yes |
-| `MEM0_API_KEY` | [Mem0 Dashboard](https://app.mem0.ai/dashboard/api-keys) | ✅ Yes |
+| `GITHUB_ACCESS_TOKEN` | [GitHub Settings](https://github.com/settings/tokens) | ✅ Yes |
 
 ---
 
@@ -104,13 +104,14 @@ Follow the prompts:
 
 ### 3️⃣ Create GitHub Repository
 
+```bash
 # Initialize git repository and commit your code
 git init -b main
 git add .
 git commit -m "Initial commit"
 
-# Create repository on GitHub and push (replace with your GitHub username)
-gh repo create lsvishaal/documentation-generator --public --source=. --remote=origin --push
+# Create repository on GitHub and push
+gh repo create Bindu-Agents-Vishaal/documentation-generator-agent --public --source=. --remote=origin --push
 ```
 
 **Alternative: Manual creation**
@@ -318,15 +319,21 @@ GitHub Actions will automatically:
 
 ```
 documentation-generator/
-├── documentation_generator/    # Main agent code
-│   ├── skills/             # Agent capabilities
-│   │   └── documentation_generator/ # documentation-generator skill
+├── documentation_generator/         # Main agent code
+│   ├── skills/                      # Agent capabilities
+│   │   └── readme_generator/
+│   │       └── skill.yaml           # README generator skill definition
+│   ├── agent_config.json            # Agent configuration
+│   ├── main.py                      # Agent entry point
 │   └── __init__.py
-├── tests/                  # Test suite
-├── docs/                   # Documentation
-├── .env.example            # Environment template
-├── docker-compose.yml      # Docker setup
-└── pyproject.toml          # Dependencies
+├── tests/                           # Test suite
+├── docs/                            # Documentation
+├── .env.example                     # Environment template
+├── .github/workflows/               # CI/CD pipelines
+├── docker-compose.yml               # Docker setup
+├── Dockerfile.agent                 # Agent container
+├── pyproject.toml                   # Dependencies
+└── README.md                        # This file
 ```
 
 
@@ -374,7 +381,7 @@ uvx cookiecutter https://github.com/getbindu/create-bindu-agent.git
 </p>
 
 <p align="center">
-  <a href="https://github.com/lsvishaal/documentation-generator">⭐ Star this repo</a> •
+  <a href="https://github.com/Bindu-Agents-Vishaal/documentation-generator-agent">⭐ Star this repo</a> •
   <a href="https://discord.gg/3w5zuYUuwt">💬 Join Discord</a> •
   <a href="https://docs.getbindu.com">📚 Bindu Docs</a>
 </p>

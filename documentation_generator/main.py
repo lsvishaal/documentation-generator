@@ -59,7 +59,7 @@ async def initialize_agent() -> None:
 
     # Ensure model_name is always a string
     global model_name
-    model_name = model_name or "openai/gpt-4o-mini"
+    model_name = model_name or "openai/gpt-5"
     # Determine which model to use based on available keys
     if openrouter_api_key:
         model = OpenRouter(id=model_name)
@@ -144,8 +144,8 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        default=os.getenv("MODEL_NAME", "openai/gpt-4o-mini"),
-        help="Model ID (default: openai/gpt-4o-mini for OpenRouter, gpt-4o-mini for OpenAI, env: MODEL_NAME)",
+        default=os.getenv("MODEL_NAME", "openai/gpt-5"),
+        help="Model ID (default: openai/gpt-5 via OpenRouter, env: MODEL_NAME)",
     )
 
     parser.add_argument(

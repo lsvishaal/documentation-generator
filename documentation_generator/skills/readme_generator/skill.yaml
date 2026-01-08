@@ -1,0 +1,46 @@
+name: "readme-generator"
+version: "1.0.0"
+description: "Generates comprehensive, professional README files for open source projects by analyzing GitHub repositories"
+author: "lsvishaal"
+category: "documentation"
+
+capabilities:
+  - name: "fetch_repository_details"
+    description: "Fetches repository information including description, stars, forks, and issues from GitHub"
+    tools: ["GithubTools.get_repository"]
+
+  - name: "fetch_repository_languages"
+    description: "Retrieves programming languages used in a repository"
+    tools: ["GithubTools.get_repository_languages"]
+
+  - name: "generate_readme"
+    description: "Generates a well-structured README with cloning, installation, usage, contribution, and license sections"
+    input_schema:
+      type: "object"
+      properties:
+        repository_url:
+          type: "string"
+          description: "GitHub repository URL or owner/repo format"
+        include_badges:
+          type: "boolean"
+          description: "Include GitHub badges (stars, forks, issues, etc.)"
+
+  - name: "write_readme_to_filesystem"
+    description: "Writes the generated README to the local filesystem"
+    tools: ["LocalFileSystemTools.write_file"]
+
+tags:
+  - "documentation"
+  - "readme"
+  - "github"
+  - "automation"
+  - "open-source"
+
+requirements:
+  - "GITHUB_ACCESS_TOKEN (required for GitHub API access)"
+  - "OPENROUTER_API_KEY or OPENAI_API_KEY (for LLM capabilities)"
+
+execution_cost:
+  base_cost: 0.01
+  per_request: 0.05
+  currency: "USD"
